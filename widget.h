@@ -18,11 +18,16 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
 
+protected:
+    void resizeEvent(QResizeEvent *ev);
+
 private slots:
     void on_sourceBrowse_clicked();
     void on_sourceLoad_clicked();
     void on_sliceToClipboard_clicked();
+    void preview_imageSizeChanged();
     void process_finished(QString infile, QString outfile);
+    void scrollArea_offsetChanged();
 
 private:
     Ui::Widget *ui = nullptr;

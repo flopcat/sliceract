@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QProcess>
+#include <QScrollBar>
 #include "widget.h"
 #include "ui_widget.h"
 #include "previewwidget.h"
@@ -12,13 +13,25 @@ Widget::Widget(QWidget *parent) :
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    preview = new PreviewWidget;
+    preview = new PreviewWidget();
     ui->previewHostLayout->addWidget(preview);
+    connect(preview, &PreviewWidget::imageSizeChanged,
+            this, &Widget::preview_imageSizeChanged);
+    connect(ui->horizontalScrollBar, &QScrollBar::valueChanged,
+            this, &Widget::scrollArea_offsetChanged);
+    connect(ui->verticalScrollBar, &QScrollBar::valueChanged,
+            this, &Widget::scrollArea_offsetChanged);
 }
 
 Widget::~Widget()
 {
     delete ui;
+}
+
+void Widget::resizeEvent(QResizeEvent *ev)
+{
+    Q_UNUSED(ev);
+    preview_imageSizeChanged();
 }
 
 void Widget::on_sourceBrowse_clicked()
@@ -64,6 +77,15 @@ void Widget::on_sliceToClipboard_clicked()
     ui->status->setText("Running");
 }
 
+void Widget::preview_imageSizeChanged()
+{
+    QSize imageSize = preview->imageSize();
+    QSize previewSize = preview->size();
+    QSize scrollSize = imageSize - previewSize;
+    ui->horizontalScrollBar->setRange(0, std::max(scrollSize.width(), 0));
+    ui->verticalScrollBar->setRange(0, std::max(scrollSize.height(), 0));
+}
+
 void Widget::process_finished(QString infile, QString outfile)
 {
     delete process;
@@ -80,4 +102,10 @@ void Widget::process_finished(QString infile, QString outfile)
     QApplication::clipboard()->setText(QString::fromUtf8(data));
     out.remove();
     ui->status->setText("");
+}
+
+void Widget::scrollArea_offsetChanged()
+{
+    preview->offsetImage({ ui->horizontalScrollBar->value(),
+                           ui->verticalScrollBar->value() });
 }
