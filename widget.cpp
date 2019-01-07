@@ -50,7 +50,9 @@ void Widget::on_sourceBrowse_clicked()
     QString fname = QFileDialog::getOpenFileName(this, "Select Image", oldDir, "Images (*.png *.jpg *.bmp)");
     if (fname.isEmpty())
         return;
-    oldDir = QFileInfo(fname).absoluteDir().dirName();
+    auto oldDirSplit = fname.split('/');
+    oldDirSplit.takeLast();
+    oldDir = oldDirSplit.join('/');
     ui->source->setText(fname);
 }
 
