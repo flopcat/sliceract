@@ -26,6 +26,8 @@ private slots:
     void on_sourceLoad_clicked();
     void on_sliceToClipboard_clicked();
     void preview_imageSizeChanged();
+    void preview_wheelHorizontal(int delta);
+    void preview_wheelVertical(int delta);
     void process_finished(QString infile, QString outfile);
     void scrollArea_offsetChanged();
 

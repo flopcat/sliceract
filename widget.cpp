@@ -22,6 +22,10 @@ Widget::Widget(QWidget *parent) :
 
     connect(preview, &PreviewWidget::imageSizeChanged,
             this, &Widget::preview_imageSizeChanged);
+    connect(preview, &PreviewWidget::wheelHorizontal,
+            this, &Widget::preview_wheelHorizontal);
+    connect(preview, &PreviewWidget::wheelVertical,
+            this, &Widget::preview_wheelVertical);
     connect(ui->horizontalScrollBar, &QScrollBar::valueChanged,
             this, &Widget::scrollArea_offsetChanged);
     connect(ui->verticalScrollBar, &QScrollBar::valueChanged,
@@ -92,6 +96,18 @@ void Widget::preview_imageSizeChanged()
     ui->verticalScrollBar->setRange(0, std::max(scrollSize.height(), 0));
     ui->horizontalScrollBar->setPageStep(preview->width());
     ui->verticalScrollBar->setPageStep(preview->height());
+}
+
+void Widget::preview_wheelHorizontal(int delta)
+{
+    int p = ui->horizontalScrollBar->sliderPosition();
+    ui->horizontalScrollBar->setSliderPosition(p + delta);
+}
+
+void Widget::preview_wheelVertical(int delta)
+{
+    int p = ui->verticalScrollBar->sliderPosition();
+    ui->verticalScrollBar->setSliderPosition(p + delta);
 }
 
 void Widget::process_finished(QString infile, QString outfile)
