@@ -105,6 +105,14 @@ void PreviewWidget::mouseMoveEvent(QMouseEvent *ev)
     update();
 }
 
+void PreviewWidget::wheelEvent(QWheelEvent *ev)
+{
+    if (ev->modifiers().testFlag(Qt::ShiftModifier))
+        emit wheelHorizontal(-ev->delta());
+    else
+        emit wheelVertical(-ev->delta());
+}
+
 void PreviewWidget::updateSelection()
 {
     int m0x = std::min(mp0.x(), mp1.x());

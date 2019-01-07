@@ -1,4 +1,4 @@
-#ifndef PREVIEWWIDGET_H
+﻿#ifndef PREVIEWWIDGET_H
 #define PREVIEWWIDGET_H
 #include <QOpenGLWidget>
 #include <QPixmap>
@@ -21,6 +21,8 @@ public slots:
 
 signals:
     void imageSizeChanged(QSize size);
+    void wheelHorizontal(int delta);
+    void wheelVertical(int delta);
 
 protected:
     void resizeGL(int w, int h);
@@ -28,6 +30,7 @@ protected:
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
     void mouseMoveEvent(QMouseEvent *ev);
+    void wheelEvent(QWheelEvent *ev);
 
 private:
     void updateSelection();
