@@ -15,12 +15,18 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     preview = new PreviewWidget();
     ui->previewHostLayout->addWidget(preview);
+
+    int step = QFontMetrics(preview->font()).height();
+    ui->horizontalScrollBar->setSingleStep(step);
+    ui->verticalScrollBar->setSingleStep(step);
+
     connect(preview, &PreviewWidget::imageSizeChanged,
             this, &Widget::preview_imageSizeChanged);
     connect(ui->horizontalScrollBar, &QScrollBar::valueChanged,
             this, &Widget::scrollArea_offsetChanged);
     connect(ui->verticalScrollBar, &QScrollBar::valueChanged,
             this, &Widget::scrollArea_offsetChanged);
+
 }
 
 Widget::~Widget()
@@ -84,6 +90,8 @@ void Widget::preview_imageSizeChanged()
     QSize scrollSize = imageSize - previewSize;
     ui->horizontalScrollBar->setRange(0, std::max(scrollSize.width(), 0));
     ui->verticalScrollBar->setRange(0, std::max(scrollSize.height(), 0));
+    ui->horizontalScrollBar->setPageStep(preview->width());
+    ui->verticalScrollBar->setPageStep(preview->height());
 }
 
 void Widget::process_finished(QString infile, QString outfile)

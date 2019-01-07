@@ -6,6 +6,7 @@
 PreviewWidget::PreviewWidget(QWidget *owner) : QOpenGLWidget(owner)
 {
     this->setMouseTracking(true);
+    this->setFont(QFont("Monospace", 12));
 }
 
 QSize PreviewWidget::imageSize()
@@ -56,9 +57,7 @@ void PreviewWidget::paintGL()
 
         p.setPen(QColor(255,255,255));
         const QString text = "NO SIGNAL";
-        QFont f = QFont("Monospace", 12);
-        p.setFont(f);
-        QFontMetrics fm(f);
+        QFontMetrics fm(font());
         int x = (glSize.width() - fm.horizontalAdvance(text))/2;
         int y = (glSize.height() - fm.height())/2;
         p.drawText(x, y, text);
