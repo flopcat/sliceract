@@ -80,7 +80,7 @@ void Widget::on_sliceToClipboard_clicked()
     QString outfile = QString("/tmp/sliceract.output.%1").arg(QCoreApplication::applicationPid());
     process = new QProcess();
     process->setProgram("tesseract");
-    process->setArguments({tempImage, outfile, "--psm", "4"});
+    process->setArguments({tempImage, outfile, "--psm", QString::number(ui->segmentationMode->currentIndex())});
     connect(process,QOverload<int>::of(&QProcess::finished),
             this, [tempImage,outfile,this](int) -> void {
         process_finished(tempImage, outfile + ".txt");
