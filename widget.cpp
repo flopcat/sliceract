@@ -9,6 +9,16 @@
 #include "ui_widget.h"
 #include "previewwidget.h"
 
+const char tesseractBinary[] =
+#if defined(Q_OS_WIN)
+    "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+#else
+    "tesseract"
+#endif
+;
+
+
+
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
@@ -83,7 +93,7 @@ void Widget::on_sliceToClipboard_clicked()
     if (!makeTempImage(preview->imageFilename(), preview->imageSelection()))
         return;
     process = new QProcess();
-    process->setProgram("tesseract");
+    process->setProgram(tesseractBinary);
     process->setArguments({tempImageFileName, tempTextFileName, "--psm",
                            QString::number(ui->segmentationMode->currentIndex())});
     connect(process, QOverload<int>::of(&QProcess::finished),
