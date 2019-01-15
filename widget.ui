@@ -105,7 +105,7 @@
         <item>
          <widget class="QComboBox" name="segmentationMode">
           <property name="currentIndex">
-           <number>4</number>
+           <number>1</number>
           </property>
           <item>
            <property name="text">
