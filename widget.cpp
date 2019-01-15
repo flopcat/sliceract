@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QProcess>
 #include <QScrollBar>
+#include <QStandardPaths>
 #include "widget.h"
 #include "ui_widget.h"
 #include "previewwidget.h"
@@ -31,6 +32,10 @@ Widget::Widget(QWidget *parent) :
     connect(ui->verticalScrollBar, &QScrollBar::valueChanged,
             this, &Widget::scrollArea_offsetChanged);
 
+    QString tmpDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    QString appPid = QString::number(QCoreApplication::applicationPid());
+    tempImageFileName = QString("%1/sliceract.input.%2.png").arg(tmpDir, appPid);
+    tempTextFileName = QString("%1/sliceract.output.%2").arg(tmpDir, appPid);
 }
 
 Widget::~Widget()
@@ -61,30 +66,28 @@ void Widget::on_sourceLoad_clicked()
     preview->loadImage(ui->source->text());
 }
 
-QString makeTempImage(QString filename, QRect selection)
+bool Widget::makeTempImage(QString filename, QRect selection)
 {
-    QString outname = QString("/tmp/sliceract.input.%1.png").arg(QCoreApplication::applicationPid());
     QImage source;
     if (!source.load(filename))
-        return QString();
+        return false;
     QImage destination = source.copy(selection);
-    destination.save(outname);
-    return QString(outname);
+    bool success = destination.save(tempImageFileName);
+    return success;
 }
 
 void Widget::on_sliceToClipboard_clicked()
 {
     if (process)
         return;
-    QString tempImage = makeTempImage(preview->imageFilename(), preview->imageSelection());
-    QString outfile = QString("/tmp/sliceract.output.%1").arg(QCoreApplication::applicationPid());
+    if (!makeTempImage(preview->imageFilename(), preview->imageSelection()))
+        return;
     process = new QProcess();
     process->setProgram("tesseract");
-    process->setArguments({tempImage, outfile, "--psm", QString::number(ui->segmentationMode->currentIndex())});
-    connect(process,QOverload<int>::of(&QProcess::finished),
-            this, [tempImage,outfile,this](int) -> void {
-        process_finished(tempImage, outfile + ".txt");
-    });
+    process->setArguments({tempImageFileName, tempTextFileName, "--psm",
+                           QString::number(ui->segmentationMode->currentIndex())});
+    connect(process, QOverload<int>::of(&QProcess::finished),
+            this, &Widget::process_finished);
     process->start();
     ui->status->setText("Running");
 }
@@ -112,12 +115,14 @@ void Widget::preview_wheelVertical(int delta)
     ui->verticalScrollBar->setSliderPosition(p + delta);
 }
 
-void Widget::process_finished(QString infile, QString outfile)
+void Widget::process_finished()
 {
-    delete process;
-    process = nullptr;
-    QFile in(infile);
-    QFile out(outfile);
+    if (process) {
+        delete process;
+        process = nullptr;
+    }
+    QFile in(tempImageFileName);
+    QFile out(tempTextFileName + ".txt");
     in.remove();
     if (!out.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Could not open tesseract output",

@@ -28,10 +28,14 @@ private slots:
     void preview_imageSizeChanged();
     void preview_wheelHorizontal(int delta);
     void preview_wheelVertical(int delta);
-    void process_finished(QString infile, QString outfile);
+    void process_finished();
     void scrollArea_offsetChanged();
 
 private:
+    bool makeTempImage(QString filename, QRect selection);
+
+    QString tempImageFileName;
+    QString tempTextFileName;
     Ui::Widget *ui = nullptr;
     PreviewWidget *preview = nullptr;
     QProcess *process = nullptr;
