@@ -133,7 +133,10 @@ void Widget::process_finished()
     }
     QFile in(tempImageFileName);
     QFile out(tempTextFileName + ".txt");
-    in.remove();
+    if (!in.remove()) {
+        QMessageBox::warning(this, "Could not remove the input image",
+                             "Perhaps the data is wrong");
+    }
     if (!out.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Could not open tesseract output",
                              "Perhaps the process failed.");
