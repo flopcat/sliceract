@@ -52,6 +52,7 @@ void PreviewWidget::resizeEvent(QResizeEvent *event)
 
 void PreviewWidget::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter p(this);
     if (image.isNull()) {
         p.fillRect(QRect(QPoint(),glSize), QBrush(QColor(0,0,255)));
