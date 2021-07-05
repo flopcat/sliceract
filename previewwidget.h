@@ -3,7 +3,7 @@
 #include <QOpenGLWidget>
 #include <QPixmap>
 
-class PreviewWidget : public QOpenGLWidget
+class PreviewWidget : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QSize imageSize READ imageSize NOTIFY imageSizeChanged)
@@ -25,8 +25,8 @@ signals:
     void wheelVertical(int delta);
 
 protected:
-    void resizeGL(int w, int h);
-    void paintGL();
+    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
     void mouseMoveEvent(QMouseEvent *ev);

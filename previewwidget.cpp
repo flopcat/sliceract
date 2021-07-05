@@ -3,7 +3,7 @@
 #include <utility>
 #include "previewwidget.h"
 
-PreviewWidget::PreviewWidget(QWidget *owner) : QOpenGLWidget(owner)
+PreviewWidget::PreviewWidget(QWidget *owner) : QWidget(owner)
 {
     this->setMouseTracking(true);
     this->setFont(QFont("Monospace", 12));
@@ -34,7 +34,7 @@ void PreviewWidget::loadImage(QString file)
         imageOffset = QPoint();
         emit imageSizeChanged(size1);
     }
-    resizeGL(size().width(), size().height());
+    resizeEvent(nullptr);
     update();
 }
 
@@ -44,12 +44,13 @@ void PreviewWidget::offsetImage(QPoint topLeft)
     update();
 }
 
-void PreviewWidget::resizeGL(int w, int h)
+void PreviewWidget::resizeEvent(QResizeEvent *event)
 {
-    glSize = {w,h};
+    Q_UNUSED(event);
+    glSize = size();
 }
 
-void PreviewWidget::paintGL()
+void PreviewWidget::paintEvent(QPaintEvent *event)
 {
     QPainter p(this);
     if (image.isNull()) {
