@@ -90,8 +90,12 @@ void Widget::on_sliceToClipboard_clicked()
 {
     if (process)
         return;
-    if (!makeTempImage(preview->imageFilename(), preview->imageSelection()))
+    ui->status->setText("Slicing");
+    qApp->processEvents(QEventLoop::AllEvents, 5);
+    if (!makeTempImage(preview->imageFilename(), preview->imageSelection())) {
+        ui->status->setText("");
         return;
+    }
     process = new QProcess();
     process->setProgram(tesseractBinary);
     process->setArguments({tempImageFileName, tempTextFileName, "--psm", QString::number(1)});
