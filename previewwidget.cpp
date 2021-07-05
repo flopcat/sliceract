@@ -58,7 +58,7 @@ void PreviewWidget::paintGL()
         p.setPen(QColor(255,255,255));
         const QString text = "NO SIGNAL";
         QFontMetrics fm(font());
-        int x = (glSize.width() - fm.horizontalAdvance(text))/2;
+        int x = (glSize.width() - fm.width(text))/2;
         int y = (glSize.height() - fm.height())/2;
         p.drawText(x, y, text);
         return;
