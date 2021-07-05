@@ -94,8 +94,7 @@ void Widget::on_sliceToClipboard_clicked()
         return;
     process = new QProcess();
     process->setProgram(tesseractBinary);
-    process->setArguments({tempImageFileName, tempTextFileName, "--psm",
-                           QString::number(ui->segmentationMode->currentIndex())});
+    process->setArguments({tempImageFileName, tempTextFileName, "--psm", QString::number(1)});
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &Widget::process_finished);
     process->start();
